@@ -18,7 +18,7 @@ const firebaseConfig = {
 };
 
 const ADMIN_EMAIL = "dinijanuari23@gmail.com";
-const STORE_DOC_PATH = ["settings", "store_gamepass"]; // { open, rate }
+const STORE_DOC_PATH = ["settings", "store"]; // { open, rate }
 const wantAdminPanel = new URLSearchParams(window.location.search).get("admin") === "1";
 
 // WhatsApp target number (Indonesia) -> 62...
