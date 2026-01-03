@@ -5,16 +5,16 @@ import { getFirestore, doc, onSnapshot, setDoc, serverTimestamp } from "https://
 import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
 // =======================
-// FIREBASE CONFIG (gp-order)
+// FIREBASE CONFIG (gamepasswa-bd46a)
 // =======================
 const firebaseConfig = {
-  apiKey: "AIzaSyArSdap1Bl2MKU6MoBn7kcWK0IQx1J3PTg",
-  authDomain: "gp-order.firebaseapp.com",
-  projectId: "gp-order",
-  storageBucket: "gp-order.firebasestorage.app",
-  messagingSenderId: "933313943838",
-  appId: "1:933313943838:web:bd1abe7762dee7eba6110f",
-  measurementId: "G-Z6BRWFH53P"
+  apiKey: "AIzaSyDG27cr1UwsZVDJK8JiSjoTnFqKORR9PvI",
+  authDomain: "gamepasswa-bd46a.firebaseapp.com",
+  projectId: "gamepasswa-bd46a",
+  storageBucket: "gamepasswa-bd46a.firebasestorage.app",
+  messagingSenderId: "228214243708",
+  appId: "1:228214243708:web:2100a4f9c436d68aa664f9",
+  measurementId: "G-R9XFD5CCRZ"
 };
 
 const ADMIN_EMAIL = "dinijanuari23@gmail.com";
