@@ -18,7 +18,7 @@ const firebaseConfig = {
 };
 
 const ADMIN_EMAIL = "dinijanuari23@gmail.com";
-const STORE_DOC_PATH = ["settings", "store"]; // { open, rate }
+const STORE_DOC_PATH = ["settings", "store"]; // { open, rate, updatedAt }
 const wantAdminPanel = new URLSearchParams(window.location.search).get("admin") === "1";
 
 // WhatsApp target number (Indonesia) -> 62...
@@ -103,6 +103,7 @@ function applyStoreStatusUI(){
     badge.style.color = storeOpen ? '#14532d' : '#7f1d1d';
   }
 }
+
 function applyAdminUI(user){
   const panel = document.getElementById('adminPanel');
   if(!panel) return;
@@ -145,6 +146,7 @@ async function setStoreOpen(flag){
   const ref = doc(db, STORE_DOC_PATH[0], STORE_DOC_PATH[1]);
   await setDoc(ref, { open: !!flag, updatedAt: serverTimestamp() }, { merge: true });
 }
+
 async function setStoreRate(newRate){
   if(!isAdmin){
     showPopup('Notification', 'Akses ditolak', 'Hanya admin yang bisa mengubah rate.');
