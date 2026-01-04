@@ -381,8 +381,8 @@ document.addEventListener('DOMContentLoaded', function(){
     if (!storeOpen) {
       showPopup(
         'Notification',
-        'CLOSE',
-        'Mohon maaf, saat ini kamu belum bisa melakukan pemesanan. Silahkan kembali saat @Topupgram OPEN.'
+        'SEDANG ISTIRAHAT/CLOSE',
+        'Mohon maaf, saat ini kamu belum bisa melakukan pemesanan. Silahkan kembali dan coba lagi nanti.'
       );
       return;
     }
