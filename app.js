@@ -1,4 +1,4 @@
-// app.js (ESM module) - Telegram + Payment Modal
+// app.js (ESM module) - Telegram + Payment Modal + Tabs + Reminder + Tutorial + Admin + Store Status/Rate
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getFirestore, doc, onSnapshot, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
@@ -258,14 +258,13 @@ function calcGig(){
 }
 
 // =======================
-// TYPE UI
+// TYPE UI (tabs + reminder + checkbox)
 // =======================
 function setActiveTab(type){
   const tabs = document.querySelectorAll(".typeTab");
   tabs.forEach(btn => {
     const v = btn.getAttribute("data-value");
-    if(v === type) btn.classList.add("active");
-    else btn.classList.remove("active");
+    btn.classList.toggle("active", v === type);
   });
 }
 
@@ -309,6 +308,7 @@ function applyTypeUI(){
   notax?.classList.add("hidden");
   gig?.classList.add("hidden");
 
+  // reset required
   if(targetNet) targetNet.required = false;
   if(robuxInput) robuxInput.required = false;
   if(gigMap) gigMap.required = false;
@@ -317,6 +317,7 @@ function applyTypeUI(){
   if(gpLinkPaytax) gpLinkPaytax.required = false;
   if(gpLinkNotax) gpLinkNotax.required = false;
 
+  // reset values
   if(targetNet) targetNet.value = "";
   if(robuxInput) robuxInput.value = "";
   if(gigMap) gigMap.value = "";
@@ -355,16 +356,19 @@ async function sendTelegramMessage(text){
   return res;
 }
 
-// Fallback: send GET without navigating (cannot read response)
+// fallback GET without navigation (best effort)
 function sendTelegramViaImage(text){
-  const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${encodeURIComponent(TELEGRAM_CHAT_ID)}&text=${encodeURIComponent(text)}`;
+  const url =
+    `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage` +
+    `?chat_id=${encodeURIComponent(TELEGRAM_CHAT_ID)}` +
+    `&text=${encodeURIComponent(text)}`;
   const img = new Image();
   img.referrerPolicy = "no-referrer";
   img.src = url;
 }
 
 // =======================
-// PAYMENT MODAL
+// PAYMENT MODAL (full methods)
 // =======================
 function showPaymentPopup(qrUrl, hargaFormatted){
   const backdrop = document.getElementById("paymentModalBackdrop");
@@ -445,10 +449,10 @@ function showPaymentPopup(qrUrl, hargaFormatted){
     tmp.value = text;
     document.body.appendChild(tmp);
     tmp.select();
-    try {
+    try{
       document.execCommand("copy");
       showMessage(successMsg);
-    } catch(e) {
+    } catch(e){
       showMessage("Tidak dapat menyalin, silakan salin manual.");
     }
     document.body.removeChild(tmp);
@@ -457,7 +461,10 @@ function showPaymentPopup(qrUrl, hargaFormatted){
   function copyTextToClipboard(text, successMsg){
     if(!text) return;
     if(navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(text).then(() => showMessage(successMsg)).catch(() => fallbackCopy(text, successMsg));
+      navigator.clipboard
+        .writeText(text)
+        .then(() => showMessage(successMsg))
+        .catch(() => fallbackCopy(text, successMsg));
     } else {
       fallbackCopy(text, successMsg);
     }
@@ -503,57 +510,294 @@ function showPaymentPopup(qrUrl, hargaFormatted){
     };
   });
 
+  // === Lanjut dari sini (sesuai yang kamu minta sebelumnya) ===
   document.getElementById("closeModalBtn").onclick = function(){
-  backdrop.style.display = "none";
-  backdrop.setAttribute("aria-hidden", "true");
-};
-
-backdrop.onclick = function(e){
-  if(e.target === backdrop){
     backdrop.style.display = "none";
     backdrop.setAttribute("aria-hidden", "true");
-  }
-};
+  };
 
-copyNumberBtn.onclick = function(){
-  copyTextToClipboard(walletNumber.textContent || "", "Nomor berhasil disalin");
-};
-
-copyAmountBtn.onclick = function(){
-  copyTextToClipboard(modalAmount.textContent || "", "Jumlah berhasil disalin");
-};
-
-document.getElementById("openBotBtn").onclick = function(){
-  const botUsername = "topupgamesbot";
-  const tgScheme = "tg://resolve?domain=" + encodeURIComponent(botUsername);
-  const webLink = "https://t.me/" + encodeURIComponent(botUsername) + "?start";
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
-  let appOpened = false;
-  function onVisibilityChange(){
-    if(document.hidden) appOpened = true;
-  }
-  document.addEventListener("visibilitychange", onVisibilityChange);
-
-  try{
-    if(isMobile){
-      window.location.href = tgScheme;
-    } else {
-      const w = window.open(tgScheme, "_blank");
-      try{ w && w.focus(); }catch(e){}
+  backdrop.onclick = function(e){
+    if(e.target === backdrop){
+      backdrop.style.display = "none";
+      backdrop.setAttribute("aria-hidden", "true");
     }
-  }catch(e){}
+  };
 
-  const t = setTimeout(() => {
-    if(!appOpened){
-      window.open(webLink, "_blank");
+  copyNumberBtn.onclick = function(){
+    copyTextToClipboard(walletNumber.textContent || "", "Nomor berhasil disalin");
+  };
+
+  copyAmountBtn.onclick = function(){
+    copyTextToClipboard(modalAmount.textContent || "", "Jumlah berhasil disalin");
+  };
+
+  document.getElementById("openBotBtn").onclick = function(){
+    const botUsername = "topupgamesbot";
+    const tgScheme = "tg://resolve?domain=" + encodeURIComponent(botUsername);
+    const webLink = "https://t.me/" + encodeURIComponent(botUsername) + "?start";
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+    let appOpened = false;
+    function onVisibilityChange(){
+      if(document.hidden) appOpened = true;
     }
-    document.removeEventListener("visibilitychange", onVisibilityChange);
-  }, 800);
+    document.addEventListener("visibilitychange", onVisibilityChange);
 
-  window.addEventListener("pagehide", function cleanup(){
-    clearTimeout(t);
-    document.removeEventListener("visibilitychange", onVisibilityChange);
-    window.removeEventListener("pagehide", cleanup);
+    try{
+      if(isMobile){
+        window.location.href = tgScheme;
+      } else {
+        const w = window.open(tgScheme, "_blank");
+        try{ w && w.focus(); }catch(e){}
+      }
+    } catch(e){}
+
+    const t = setTimeout(() => {
+      if(!appOpened){
+        window.open(webLink, "_blank");
+      }
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    }, 800);
+
+    window.addEventListener("pagehide", function cleanup(){
+      clearTimeout(t);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      window.removeEventListener("pagehide", cleanup);
+    });
+  };
+}
+
+// =======================
+// DOM READY
+// =======================
+document.addEventListener("DOMContentLoaded", function(){
+  const gpType = document.getElementById("gpType");
+  const targetNet = document.getElementById("targetNet");
+  const robuxInput = document.getElementById("robuxInput");
+  const gigRobuxPrice = document.getElementById("gigRobuxPrice");
+
+  const gpLinkPaytax = document.getElementById("gpLinkPaytax");
+  const gpLinkNotax = document.getElementById("gpLinkNotax");
+  const gpAgree = document.getElementById("gpAgree");
+
+  // Tabs -> control hidden select
+  document.querySelectorAll(".typeTab").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const v = btn.getAttribute("data-value") || "";
+      if(!gpType) return;
+      gpType.value = v;
+      gpType.dispatchEvent(new Event("change", { bubbles: true }));
+    });
   });
-};
+
+  // tutorial link popup
+  document.querySelectorAll(".gpTutorialLink").forEach(el => {
+    el.addEventListener("click", (e) => {
+      e.preventDefault();
+      openTutorialModal();
+    });
+  });
+  document.getElementById("tutorialCloseBtn")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    closeTutorialModal();
+  });
+
+  applyTypeUI();
+  setRateUI();
+
+  gpType?.addEventListener("change", () => {
+    applyTypeUI();
+    setRateUI();
+  });
+
+  targetNet?.addEventListener("input", () => {
+    if(gpType?.value === "paytax") calcPaytax();
+  });
+
+  robuxInput?.addEventListener("input", () => {
+    if(gpType?.value === "notax") calcNotax();
+  });
+
+  gigRobuxPrice?.addEventListener("input", () => {
+    if(gpType?.value === "gig") calcGig();
+  });
+
+  // listen store status + rate
+  const storeRef = doc(db, STORE_DOC_PATH[0], STORE_DOC_PATH[1]);
+  onSnapshot(storeRef, (snap) => {
+    if(snap.exists()){
+      const data = snap.data();
+      storeOpen = (data.open !== false);
+      RATE = Number(data.rate || 75);
+    } else {
+      storeOpen = true;
+      RATE = 75;
+    }
+
+    applyStoreStatusUI();
+    applyAdminUI(auth.currentUser || null);
+    setRateUI();
+
+    if(gpType?.value === "paytax") calcPaytax();
+    if(gpType?.value === "notax") calcNotax();
+    if(gpType?.value === "gig") calcGig();
+  }, () => {
+    storeOpen = true;
+    RATE = 75;
+    applyStoreStatusUI();
+    setRateUI();
+  });
+
+  // admin auth
+  onAuthStateChanged(auth, (user) => {
+    isAdmin = !!(user && (user.email || "").toLowerCase() === ADMIN_EMAIL.toLowerCase());
+    applyAdminUI(user);
+
+    if(user && !isAdmin){
+      signOut(auth).catch(()=>{});
+      showPopup("Notification", "Akses ditolak", "Email ini bukan admin.");
+    }
+  });
+
+  document.getElementById("btnAdminLogin")?.addEventListener("click", async ()=>{
+    try { await signInWithPopup(auth, provider); }
+    catch(e){ showPopup("Notification", "Login gagal", "Login dibatalkan / gagal."); }
+  });
+
+  document.getElementById("btnAdminLogout")?.addEventListener("click", async ()=>{
+    try { await signOut(auth); } catch(e){}
+  });
+
+  document.getElementById("btnSetOpen")?.addEventListener("click", ()=> setStoreOpen(true));
+  document.getElementById("btnSetClose")?.addEventListener("click", ()=> setStoreOpen(false));
+
+  document.getElementById("btnSaveRate")?.addEventListener("click", ()=>{
+    const v = document.getElementById("adminRateInput")?.value;
+    setStoreRate(v);
+  });
+
+  // submit -> Telegram -> Payment modal
+  document.getElementById("btnWa")?.addEventListener("click", async function(){
+    if(!storeOpen){
+      showPopup(
+        "Notification",
+        "SEDANG ISTIRAHAT/CLOSE",
+        "Mohon maaf, saat ini kamu belum bisa melakukan pemesanan. Silahkan kembali dan coba lagi nanti."
+      );
+      return;
+    }
+
+    const form = document.getElementById("orderForm");
+    const type = gpType?.value || "";
+
+    // validate required fields (checkbox included)
+    const inputs = form?.querySelectorAll("input[required], select[required]") || [];
+    for(const input of inputs){
+      if(input.type === "checkbox"){
+        if(!input.checked){
+          showPopup("Notification", "Oops", "Centang persetujuan dulu ya.");
+          try{ input.focus(); }catch(e){}
+          return;
+        }
+      } else if(!String(input.value || "").trim()){
+        showPopup("Notification", "Oops", "Harap isi semua kolom yang wajib diisi!");
+        try{ input.focus(); }catch(e){}
+        return;
+      }
+    }
+
+    // link/id gamepass wajib utk paytax/notax
+    let gpLink = "";
+    if(type === "paytax"){
+      gpLink = gpLinkPaytax?.value?.trim() || "";
+      if(!gpLink || !isValidGamePassRef(gpLink)){
+        showPopup("Notification", "Oops", "ID/Link Game Pass wajib & harus valid.");
+        gpLinkPaytax?.focus();
+        return;
+      }
+    }
+    if(type === "notax"){
+      gpLink = gpLinkNotax?.value?.trim() || "";
+      if(!gpLink || !isValidGamePassRef(gpLink)){
+        showPopup("Notification", "Oops", "ID/Link Game Pass wajib & harus valid.");
+        gpLinkNotax?.focus();
+        return;
+      }
+    }
+
+    // extra guard (only for paytax/notax)
+    if((type === "paytax" || type === "notax") && !gpAgree?.checked){
+      showPopup("Notification", "Oops", "Centang persetujuan dulu ya.");
+      gpAgree?.focus();
+      return;
+    }
+
+    const displayUser = document.getElementById("displayUser")?.value?.trim() || "";
+    const hargaText = document.getElementById("harga")?.value || "";
+    const hargaNum = numOnly(hargaText);
+
+    if(!hargaNum){
+      showPopup("Notification", "Oops", "Harga belum terhitung. Cek input kamu.");
+      return;
+    }
+
+    let detailLine = "";
+    if(type === "paytax"){
+      const target = Number(targetNet?.value || 0);
+      const need = Math.ceil(target / SELLER_GET);
+      detailLine =
+        "Tipe: Gamepass Paytax\n" +
+        "Target bersih: " + target + " R$\n" +
+        "Robux dibutuhkan: " + need + " R$\n" +
+        "ID/Link Game Pass: " + gpLink + "\n";
+    } else if(type === "notax"){
+      const r = Number(robuxInput?.value || 0);
+      const net = Math.floor(r * SELLER_GET);
+      detailLine =
+        "Tipe: Gamepass No tax\n" +
+        "Robux: " + r + " R$\n" +
+        "Perkiraan bersih diterima: " + net + " R$\n" +
+        "ID/Link Game Pass: " + gpLink + "\n";
+    } else if(type === "gig"){
+      const map = document.getElementById("gigMap")?.value?.trim() || "";
+      const item = document.getElementById("gigItem")?.value?.trim() || "";
+      const robuxItem = Number(document.getElementById("gigRobuxPrice")?.value || 0);
+
+      detailLine =
+        "Tipe: GIG\n" +
+        "Maps: " + map + "\n" +
+        "Item gift: " + item + "\n" +
+        "Harga item: " + robuxItem + " R$\n";
+    } else {
+      showPopup("Notification", "Oops", "Pilih jenis dulu.");
+      gpType?.focus();
+      return;
+    }
+
+    const tgText =
+      "Pesanan Baru Masuk!\n\n" +
+      "Display + Username: " + displayUser + "\n" +
+      detailLine +
+      "Rate: Rp" + RATE + " / Robux\n" +
+      "Harga: " + hargaText;
+
+    try{
+      const res = await sendTelegramMessage(tgText);
+      if(res.ok){
+        showPaymentPopup(PAYMENT_QR_URL, formatRupiah(hargaNum));
+        form?.reset();
+        applyTypeUI();
+        setRateUI();
+      } else {
+        showPopup("Notification", "Gagal kirim ke Telegram", "Coba lagi ya.");
+      }
+    } catch(e){
+      // best effort fallback
+      sendTelegramViaImage(tgText);
+      showPaymentPopup(PAYMENT_QR_URL, formatRupiah(hargaNum));
+      form?.reset();
+      applyTypeUI();
+      setRateUI();
+    }
+  });
+});
