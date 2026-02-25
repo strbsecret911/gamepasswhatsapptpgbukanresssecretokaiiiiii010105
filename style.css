@@ -516,3 +516,62 @@ body.modal-open{
   font-weight:900;
   color:#065f46;
 }
+
+/* ================= GLOBAL FONT SCALE DOWN ================= */
+
+html{
+  font-size:10px; /* base kecil */
+}
+
+body{
+  font-size:10px;
+}
+
+/* Title sedikit lebih besar */
+.title{
+  font-size:12px;
+}
+
+/* Card title / modal title */
+.payTitle{
+  font-size:11px;
+}
+
+/* Label */
+label{
+  font-size:10px;
+}
+
+/* Normal text */
+.reminderText,
+.agreeRight,
+.payLabel,
+.payNote,
+.validation-center .txt{
+  font-size:10px;
+}
+
+/* Subtext */
+.validation-center .subtxt{
+  font-size:9px;
+}
+
+/* Input text */
+.input,
+textarea.input{
+  font-size:10px;
+}
+
+/* Buttons */
+.btn,
+.btnPrimary,
+.method-btn,
+.payBtn,
+.payBtnPrimary{
+  font-size:10px;
+}
+
+/* Tab buttons */
+.typeTab{
+  font-size:9px; /* biar tetap proporsional */
+}
