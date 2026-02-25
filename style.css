@@ -81,6 +81,10 @@ label{
   padding-top: 14px;
   padding-bottom: 14px;
 }
+textarea.input{
+  resize: vertical;
+  font-family: inherit;
+}
 
 .hidden{ display:none !important; }
 
