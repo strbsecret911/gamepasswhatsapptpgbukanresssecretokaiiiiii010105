@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Robux Order</title>
+  <title>Robux Gamepass & Gift in Game</title>
   <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
@@ -121,11 +121,13 @@
           <input id="rate" class="input" type="text" readonly />
         </div>
 
-        <!-- Reminder moved to above total price -->
+        <!-- Reminder moved to above total price (shown only for paytax/notax) -->
         <div id="gpReminderWrap" class="reminderWrap hidden">
           <div class="reminderText">
-            <b>Paytax / Notax</b> butuh <b>ID Game Pass</b>. <a href="#" class="gpTutorialLink"><b>Lihat cara salin ID Game Pass di sini</b></a>.
-            Robux akan masuk ke <b>Pending</b> dulu. Cek: <a href="https://www.roblox.com/transactions" target="_blank" rel="noopener">www.roblox.com/transactions</a>.
+            <b>Paytax / Notax</b> butuh <b>ID Game Pass</b>.
+            <a href="#" class="gpTutorialLink"><b>Lihat cara salin ID Game Pass di sini</b></a>.
+            Robux akan masuk ke <b>Pending</b> dulu. Cek:
+            <a href="https://www.roblox.com/transactions" target="_blank" rel="noopener">www.roblox.com/transactions</a>.
             Estimasi masuk saldo <b>± 5–8 hari</b>.
             Maksimal <b>1 ID Game Pass = 1000 Robux</b> (kalau lebih, buat lebih dari 1 Game Pass).
           </div>
@@ -145,7 +147,6 @@
           <input id="harga" class="input" type="text" readonly />
         </div>
 
-        <!-- Keep id btnWa to not break logic, label updated -->
         <button id="btnWa" type="button" class="btnPrimary">Kirim Pesanan via Telegram</button>
       </form>
     </section>
@@ -156,6 +157,45 @@
     <div class="tutorialInner" role="dialog" aria-modal="true" aria-label="Tutorial salin ID Game Pass">
       <button id="tutorialCloseBtn" type="button" class="tutorialClose" aria-label="Tutup">✕</button>
       <img id="tutorialImg" class="tutorialImg" alt="Tutorial salin ID Game Pass" />
+    </div>
+  </div>
+
+  <!-- Payment Modal -->
+  <div id="paymentModalBackdrop" class="payBackdrop" style="display:none;" aria-hidden="true">
+    <div class="payModal" role="dialog" aria-modal="true" aria-label="Pembayaran">
+      <button id="closeModalBtn" class="payClose" type="button" aria-label="Tutup">✕</button>
+
+      <div class="payTitle">Pembayaran</div>
+
+      <img id="modalQr" class="payQr" alt="QRIS" />
+
+      <div class="payMethods">
+        <button type="button" class="method-btn active" data-method="qris">QRIS</button>
+        <button type="button" class="method-btn" data-method="gopay">GoPay</button>
+        <button type="button" class="method-btn" data-method="seabank">SeaBank</button>
+        <button type="button" class="method-btn" data-method="dana">DANA</button>
+      </div>
+
+      <div id="walletLabel" class="payLabel"></div>
+
+      <div id="walletNumberWrapper" class="payNumberWrap" style="display:none;">
+        <div id="walletNumberTitle" class="payNumberTitle"></div>
+        <div id="walletNumber" class="payNumber"></div>
+        <button id="copyNumberBtn" type="button" class="payBtn">Salin Nomor</button>
+      </div>
+
+      <div class="payAmountRow">
+        <div>Total</div>
+        <div id="modalAmount" class="payAmount"></div>
+      </div>
+
+      <div class="payActions">
+        <button id="copyAmountBtn" type="button" class="payBtn">Salin Jumlah</button>
+        <button id="openBotBtn" type="button" class="payBtnPrimary">Buka Bot Telegram</button>
+      </div>
+
+      <div id="walletNote" class="payNote"></div>
+      <div id="copySuccess" class="payToast" style="display:none;"></div>
     </div>
   </div>
 
