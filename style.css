@@ -76,6 +76,12 @@ label{
   background:#fff;
 }
 
+.inputWide{
+  min-height: 52px;      /* lebih “tinggi” */
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+
 .hidden{ display:none !important; }
 
 /* ================= ADMIN ================= */
