@@ -11,14 +11,14 @@
 
   <main class="wrap">
     <header class="top">
-      <div class="title">Robux Order</div>
+      <div class="title">Robux Gamepass & Gift in Game</div>
 
       <div id="adminPanel" class="adminPanel" style="display:none;">
         <div class="adminRow">
           <div class="adminLeft">
             <span class="adminLabel">Admin:</span>
             <span id="adminEmail" class="adminEmail"></span>
-            <span id="adminBadge" class="adminBadge">OPEN</span>
+            <span id="adminBadge" class="adminBadge badgeOpen">OPEN</span>
           </div>
           <div class="adminRight">
             <button id="btnAdminLogin" type="button" class="btn">Login</button>
@@ -64,21 +64,6 @@
 
         <!-- PAYTAX -->
         <div id="paytaxFields" class="section hidden">
-          <div class="noteBox">
-            <div class="noteTitle">Perlu ID Game Pass</div>
-            <a href="#" class="gpTutorialLink"><b>Lihat cara salin ID Game Pass di sini</b></a>
-
-            <div class="noteText">
-              Robux akan masuk ke <b>Pending</b> terlebih dahulu (tidak langsung masuk saldo).
-              Cek pending di: <a href="https://www.roblox.com/transactions" target="_blank" rel="noopener">www.roblox.com/transactions</a><br/>
-              Estimasi masuk saldo: <b>± 5–8 hari</b>.
-            </div>
-
-            <div class="noteText">
-              Maksimal <b>1 ID Game Pass = 1000 Robux</b>. Jika pembelian lebih dari 1000 Robux, wajib membuat lebih dari 1 Game Pass.
-            </div>
-          </div>
-
           <div class="field">
             <label for="targetNet">Target bersih (R$)</label>
             <input id="targetNet" class="input" type="number" min="1" placeholder="contoh: 100" />
@@ -97,21 +82,6 @@
 
         <!-- NOTAX -->
         <div id="notaxFields" class="section hidden">
-          <div class="noteBox">
-            <div class="noteTitle">Perlu ID Game Pass</div>
-            <a href="#" class="gpTutorialLink"><b>Lihat cara salin ID Game Pass di sini</b></a>
-
-            <div class="noteText">
-              Robux akan masuk ke <b>Pending</b> terlebih dahulu (tidak langsung masuk saldo).
-              Cek pending di: <a href="https://www.roblox.com/transactions" target="_blank" rel="noopener">www.roblox.com/transactions</a><br/>
-              Estimasi masuk saldo: <b>± 5–8 hari</b>.
-            </div>
-
-            <div class="noteText">
-              Maksimal <b>1 ID Game Pass = 1000 Robux</b>. Jika pembelian lebih dari 1000 Robux, wajib membuat lebih dari 1 Game Pass.
-            </div>
-          </div>
-
           <div class="field">
             <label for="robuxInput">Robux (R$)</label>
             <input id="robuxInput" class="input" type="number" min="1" placeholder="contoh: 100" />
@@ -151,12 +121,32 @@
           <input id="rate" class="input" type="text" readonly />
         </div>
 
+        <!-- Reminder moved to above total price -->
+        <div id="gpReminderWrap" class="reminderWrap hidden">
+          <div class="reminderText">
+            <b>Paytax / Notax</b> butuh <b>ID Game Pass</b>. <a href="#" class="gpTutorialLink"><b>Lihat cara salin ID Game Pass di sini</b></a>.
+            Robux akan masuk ke <b>Pending</b> dulu. Cek: <a href="https://www.roblox.com/transactions" target="_blank" rel="noopener">www.roblox.com/transactions</a>.
+            Estimasi masuk saldo <b>± 5–8 hari</b>.
+            Maksimal <b>1 ID Game Pass = 1000 Robux</b> (kalau lebih, buat lebih dari 1 Game Pass).
+          </div>
+
+          <div id="gpAgreeRow" class="agreeRow hidden">
+            <div class="agreeLeft">
+              <input id="gpAgree" type="checkbox" />
+            </div>
+            <div class="agreeRight">
+              Saya sudah membaca dan memahami informasi di atas (ID Game Pass, Pending, estimasi 5–8 hari, dan batas 1000 Robux per ID).
+            </div>
+          </div>
+        </div>
+
         <div class="field">
           <label for="harga">Harga</label>
           <input id="harga" class="input" type="text" readonly />
         </div>
 
-        <button id="btnWa" type="button" class="btnPrimary">Kirim Pesanan via WhatsApp</button>
+        <!-- Keep id btnWa to not break logic, label updated -->
+        <button id="btnWa" type="button" class="btnPrimary">Kirim Pesanan via Telegram</button>
       </form>
     </section>
   </main>
