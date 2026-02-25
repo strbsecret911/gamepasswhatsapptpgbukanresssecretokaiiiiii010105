@@ -510,7 +510,6 @@ function showPaymentPopup(qrUrl, hargaFormatted){
     };
   });
 
-  // === Lanjut dari sini (sesuai yang kamu minta sebelumnya) ===
   document.getElementById("closeModalBtn").onclick = function(){
     backdrop.style.display = "none";
     backdrop.setAttribute("aria-hidden", "true");
@@ -602,6 +601,12 @@ document.addEventListener("DOMContentLoaded", function(){
     closeTutorialModal();
   });
 
+  // ===== FIX: default type render (biar GIG langsung muncul) =====
+  if(gpType && !String(gpType.value || "").trim()){
+    gpType.value = "gig";
+  }
+
+  // init UI
   applyTypeUI();
   setRateUI();
 
@@ -609,6 +614,9 @@ document.addEventListener("DOMContentLoaded", function(){
     applyTypeUI();
     setRateUI();
   });
+
+  // ===== FIX: force trigger change once after listener ready =====
+  gpType?.dispatchEvent(new Event("change", { bubbles: true }));
 
   targetNet?.addEventListener("input", () => {
     if(gpType?.value === "paytax") calcPaytax();
@@ -690,8 +698,8 @@ document.addEventListener("DOMContentLoaded", function(){
     const form = document.getElementById("orderForm");
     const type = gpType?.value || "";
 
-    // validate required fields (checkbox included)
-    const inputs = form?.querySelectorAll("input[required], select[required]") || [];
+    // validate required fields (checkbox included) + textarea required
+    const inputs = form?.querySelectorAll("input[required], select[required], textarea[required]") || [];
     for(const input of inputs){
       if(input.type === "checkbox"){
         if(!input.checked){
