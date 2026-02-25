@@ -67,23 +67,27 @@ label{
   border:1px solid var(--line);
   color:var(--text);
   padding:12px 12px;
-  border-radius:12px;
+  border-radius:12px;      /* rounding sama utk semua field */
   outline:none;
+  font:inherit;            /* biar textarea sama persis */
+  line-height:1.35;
+}
+
+/* FIX: textarea jangan lebih tinggi dari input,
+   tapi tetap bisa enter & multi-line */
+textarea.input{
+  display:block;
+  min-height:0;            /* override default UA */
+  height:44px;             /* tinggi awal = sama kayak input lain */
+  padding-top:12px;        /* konsisten */
+  padding-bottom:12px;     /* konsisten */
+  resize:vertical;
+  overflow:auto;
 }
 
 .input:focus{
   border-color:#cbd5e1;
   background:#fff;
-}
-
-.inputWide{
-  min-height: 52px;      /* lebih “tinggi” */
-  padding-top: 14px;
-  padding-bottom: 14px;
-}
-textarea.input{
-  resize: vertical;
-  font-family: inherit;
 }
 
 .hidden{ display:none !important; }
