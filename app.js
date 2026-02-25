@@ -1,4 +1,4 @@
-// app.js (ESM module) - WhatsApp version (no payment modal)
+// app.js (ESM module) - Telegram version
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getFirestore, doc, onSnapshot, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
@@ -21,8 +21,9 @@ const ADMIN_EMAIL = "dinijanuari23@gmail.com";
 const STORE_DOC_PATH = ["settings", "store"]; // { open, rate, updatedAt }
 const wantAdminPanel = new URLSearchParams(window.location.search).get("admin") === "1";
 
-// WhatsApp target number (Indonesia) -> 62...
-const WHATSAPP_NUMBER = "6283197962700";
+// Telegram target
+const TELEGRAM_CHAT_ID = "-1003629941301";
+const TELEGRAM_BOT_TOKEN = "1868293159:AAF7IWMtOEqmVqEkBAfCTexkj_siZiisC0E";
 
 // Tutorial image (popup)
 const GP_TUTORIAL_IMG_URL = "https://faqs.uwu.ai/assets/images/gallery03/f36b78b6_original.jpg?v=7f7b33db";
@@ -62,8 +63,7 @@ function isValidGamePassRef(v){
   const s = String(v || "").trim();
   if(!s) return false;
   if(isValidUrl(s)) return true;
-  // allow ID only (digits)
-  return /^\d+$/.test(s);
+  return /^\d+$/.test(s); // allow ID only
 }
 
 // =======================
@@ -112,7 +112,6 @@ function openTutorialModal(){
   img.src = GP_TUTORIAL_IMG_URL;
   modal.classList.remove('hidden');
 
-  // lock scroll (optional)
   document.documentElement.classList.add('modal-open');
   document.body.classList.add('modal-open');
 }
@@ -133,9 +132,8 @@ function applyStoreStatusUI(){
   const badge = document.getElementById('adminBadge');
   if(badge){
     badge.textContent = storeOpen ? 'OPEN' : 'CLOSED';
-    badge.style.borderColor = storeOpen ? '#bbf7d0' : '#fecaca';
-    badge.style.background = storeOpen ? '#ecfdf5' : '#fef2f2';
-    badge.style.color = storeOpen ? '#14532d' : '#7f1d1d';
+    badge.classList.toggle('badgeOpen', !!storeOpen);
+    badge.classList.toggle('badgeClosed', !storeOpen);
   }
 }
 
@@ -268,12 +266,29 @@ function setActiveTab(type){
   });
 }
 
+function applyReminderUI(type){
+  const reminder = document.getElementById('gpReminderWrap');
+  const agreeRow = document.getElementById('gpAgreeRow');
+  const agreeCb = document.getElementById('gpAgree');
+
+  const shouldShow = (type === 'paytax' || type === 'notax');
+
+  if(reminder) reminder.classList.toggle('hidden', !shouldShow);
+  if(agreeRow) agreeRow.classList.toggle('hidden', !shouldShow);
+
+  if(agreeCb){
+    agreeCb.required = shouldShow;
+    if(!shouldShow) agreeCb.checked = false;
+  }
+}
+
 function applyTypeUI(){
   const gpTypeEl = document.getElementById("gpType");
   if(!gpTypeEl) return;
 
   const gpType = gpTypeEl.value;
   setActiveTab(gpType);
+  applyReminderUI(gpType);
 
   const paytax = document.getElementById("paytaxFields");
   const notax = document.getElementById("notaxFields");
@@ -328,10 +343,11 @@ function applyTypeUI(){
 }
 
 // =======================
-// WHATSAPP SEND
+// TELEGRAM SEND
 // =======================
-function openWhatsAppWithText(text){
-  const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+function openTelegramWithText(text){
+  // Use GET + open new tab to avoid CORS issues on static sites
+  const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${encodeURIComponent(TELEGRAM_CHAT_ID)}&text=${encodeURIComponent(text)}`;
   window.open(url, "_blank");
 }
 
@@ -346,6 +362,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
   const gpLinkPaytax = document.getElementById("gpLinkPaytax");
   const gpLinkNotax = document.getElementById("gpLinkNotax");
+  const gpAgree = document.getElementById("gpAgree");
 
   // Tabs -> set gpType value
   const tabs = document.querySelectorAll('.typeTab');
@@ -444,7 +461,7 @@ document.addEventListener('DOMContentLoaded', function(){
     setStoreRate(v);
   });
 
-  // submit -> WhatsApp
+  // submit -> Telegram
   document.getElementById("btnWa")?.addEventListener("click", function() {
     if (!storeOpen) {
       showPopup(
@@ -466,6 +483,13 @@ document.addEventListener('DOMContentLoaded', function(){
         try{ input.focus(); }catch(e){}
         return;
       }
+    }
+
+    // agreement required only for paytax/notax
+    if ((type === "paytax" || type === "notax") && !gpAgree?.checked) {
+      showPopup('Notification', 'Oops', 'Centang persetujuan dulu ya.');
+      gpAgree?.focus();
+      return;
     }
 
     // gamepass ref wajib utk paytax/notax
@@ -529,16 +553,16 @@ document.addEventListener('DOMContentLoaded', function(){
       return;
     }
 
-    const waText =
+    const tgText =
       "Pesanan Baru Masuk!\n\n" +
       "Display + Username: " + displayUser + "\n" +
       detailLine +
       "Rate: Rp" + RATE + " / Robux\n" +
       "Harga: " + hargaText;
 
-    openWhatsAppWithText(waText);
+    openTelegramWithText(tgText);
 
-    // optional: reset form setelah open wa
+    // optional: reset form setelah open telegram
     form?.reset();
     applyTypeUI();
     setRateUI();
